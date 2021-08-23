@@ -29,8 +29,8 @@ async function gswriteassitance(client, data) {
 
 
     const appendOptions = {
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: 'Asistencia Ayudantes [BOT]!A1',
+        spreadsheetId: '1SdXJiswge8RVo1gOGmFFxTrznHvli6DtaoQ4S3pnPbs',
+        range: 'Asistencia-Ayudantes-[BOT]!A1',
         valueInputOption: 'USER_ENTERED',
         resource: { values: data},
     };
@@ -46,8 +46,8 @@ async function gswriteassitanceAlumno(client, data) {
 
 
     const appendOptions = {
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: 'Asistencia Estudiantes [BOT]!A1',
+        spreadsheetId: '1SdXJiswge8RVo1gOGmFFxTrznHvli6DtaoQ4S3pnPbs',
+        range: 'Asistencia-Estudiantes-[BOT]!A1',
         valueInputOption: 'USER_ENTERED',
         resource: { values: data},
     };
@@ -63,8 +63,8 @@ async function gswritehelp(client, data) {
 
 
     const appendOptions = {
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: 'Ayudas [BOT]!A1',
+        spreadsheetId: '1SdXJiswge8RVo1gOGmFFxTrznHvli6DtaoQ4S3pnPbs',
+        range: 'Ayudas-[BOT]!A1',
         valueInputOption: 'USER_ENTERED',
         resource: { values: data},
     };
@@ -81,8 +81,8 @@ async function gscountrows(client) {
 
 
     const readOptions = {
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: 'Ayudas [BOT]!A1:A100000000',
+        spreadsheetId: '1SdXJiswge8RVo1gOGmFFxTrznHvli6DtaoQ4S3pnPbs',
+        range: 'Ayudas-[BOT]!A1:A100000000',
     };
 
     let res = await gsapi.spreadsheets.values.get(readOptions);
@@ -170,7 +170,6 @@ client.on('message', message => {
                 } else {
                     // console.log("Connected to googlesheets !");
                     let alumno = args.shift();
-                    let last_F = get_actual_f();
                     // $ayuda "Nombre" "Descripcion"
                     console.log("Actual F !!!!!!!!", last_F);
                     // let seccion_function = `1`;
