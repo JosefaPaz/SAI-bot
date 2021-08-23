@@ -256,7 +256,7 @@ client.on('message', (message) => {
       client2.authorize((err) => { // tokens
         if (err) {
           console.log(err);
-        } else {
+        } else { 
           // const alumno = args.shift();
           console.log(`Actual row ${lastRow}`);
           // section = getSection(message);
