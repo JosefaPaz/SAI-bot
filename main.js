@@ -37,29 +37,29 @@ const client2 = new google.auth.JWT(keys.clientEmail, null, keys.privateKey, [
   'https://www.googleapis.com/auth/spreadsheets',
 ]);
 
-const roleSections = {
-  '875812774847074354': 1,
-  '875775363714797658': 2,
-  '875775363706417171': 3,
-  '875775363706417170': 4,
-  '875775363706417169': 5,
-  '875775363706417168': 6,
-  '875775363706417167': 7,
-  '875775363706417166': 8,
-  '875775363706417165': 9,
-  '875775363706417164': 10,
-};
+// const roleSections = {
+//   '875812774847074354': 1,
+//   '875775363714797658': 2,
+//   '875775363706417171': 3,
+//   '875775363706417170': 4,
+//   '875775363706417169': 5,
+//   '875775363706417168': 6,
+//   '875775363706417167': 7,
+//   '875775363706417166': 8,
+//   '875775363706417165': 9,
+//   '875775363706417164': 10,
+// };
 
-async function getSection(message) {
-  let section = 0;
-  const memberRoles = [...message.member.roles.cache.keys()];
-  memberRoles.forEach((rolId) => {
-    if (rolId in roleSections) {
-      section = roleSections[rolId];
-    }
-  });
-  return section;
-}
+// async function getSection(message) {
+//   let section = 0;
+//   const memberRoles = [...message.member.roles.cache.keys()];
+//   memberRoles.forEach((rolId) => {
+//     if (rolId in roleSections) {
+//       section = roleSections[rolId];
+//     }
+//   });
+//   return section;
+// }
 
 async function getDataTime() {
   const days = [
@@ -154,7 +154,7 @@ commandFiles.forEach((file) => {
 });
 
 client.once('ready', () => {
-  console.log('Pythoncita is online!');
+  console.log('SAI-bot is online!');
   gsCountRows(client2);
 });
 
@@ -172,51 +172,51 @@ client.on('message', (message) => {
   // EXIT IF MESSAGE IS FROM BOT OR DO NOT HAVE THE PREFIX
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-  // ASSISTANCE OF STUDENTS
-  if (message.channel.id === '813180432682188810') {
-    const d = new Date();
-    const hour = d.getHours();
-    const minutes = d.getMinutes();
-    console.log(`--- New message in dudas personales at ${hour} ---`);
-    if (!(hour >= 15 && hour <= 18) && !message.author.bot) {
-      message.reply(
-        '¡La SAV funciona de Lunes a Viernes de 15:30 a 18:20! Vuelva pronto :clock3: :snail:',
-      );
-    }
-    if (!message.author.bot) {
-      if (
-        (hour >= 15 && hour <= 18)
-        || (hour === 15 && minutes >= 30)
-        || (hour === 18 && minutes <= 20)
-      ) {
-        if (
-          message.member.roles.cache.some((role) => role.name === 'Alumnos')
-        ) {
-          console.log(
-            `--- Writing student assistance for ${message.author.username} ----`,
-          );
-          const section = getSection(message);
-          const dataTime = getDataTime();
+  // // ASSISTANCE OF STUDENTS
+  // if (message.channel.id === '813180432682188810') {
+  //   const d = new Date();
+  //   const hour = d.getHours();
+  //   const minutes = d.getMinutes();
+  //   console.log(`--- New message in dudas personales at ${hour} ---`);
+  //   if (!(hour >= 15 && hour <= 18) && !message.author.bot) {
+  //     message.reply(
+  //       '¡La SAV funciona de Lunes a Viernes de 15:30 a 18:20! Vuelva pronto :clock3: :snail:',
+  //     );
+  //   }
+  //   if (!message.author.bot) {
+  //     if (
+  //       (hour >= 15 && hour <= 18)
+  //       || (hour === 15 && minutes >= 30)
+  //       || (hour === 18 && minutes <= 20)
+  //     ) {
+  //       if (
+  //         message.member.roles.cache.some((role) => role.name === 'Alumnos')
+  //       ) {
+  //         console.log(
+  //           `--- Writing student assistance for ${message.author.username} ----`,
+  //         );
+  //         // const section = getSection(message);
+  //         const dataTime = getDataTime();
 
-          client2.authorize((err) => { // tokens
-            if (err) {
-              console.log(err);
-            } else {
-              return gsWriteAssistanceStudent(client2, [
-                [
-                  message.author.username,
-                  section,
-                  dataTime[0],
-                  dataTime[1],
-                  dataTime[2],
-                ],
-              ]);
-            }
-          });
-        }
-      }
-    }
-  }
+  //         client2.authorize((err) => { // tokens
+  //           if (err) {
+  //             console.log(err);
+  //           } else {
+  //             return gsWriteAssistanceStudent(client2, [
+  //               [
+  //                 message.author.username,
+  //                 // section,
+  //                 dataTime[0],
+  //                 dataTime[1],
+  //                 dataTime[2],
+  //               ],
+  //             ]);
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 
   // COMMANDS WITH THE PREFIX
   const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -230,15 +230,15 @@ client.on('message', (message) => {
 
   if (!client.commands.has(commandName)) return;
 
-  // $ayuda "name_student" "data of the help"
+  // /ayuda "name_student" "course"
   if (commandName === 'ayuda') {
     if (marks === 4) {
-      console.log(`--- Writing $ayuda from ${message.author}`);
+      console.log(`--- Writing /ayuda from ${message.author}`);
       const dataTime = getDataTime();
-      let section = {
-        Lotus: 0,
-        'Josefa España': 26,
-      };
+      // let section = {
+      //   Lotus: 0,
+      //   'Josefa España': 26,
+      // };
 
       const sep = '"';
       const indices = [];
@@ -259,7 +259,7 @@ client.on('message', (message) => {
         } else {
           // const alumno = args.shift();
           console.log(`Actual row ${lastRow}`);
-          section = getSection(message);
+          // section = getSection(message);
           return gsWriteHelp(client2, [
             [
               message.author.username,
@@ -267,7 +267,7 @@ client.on('message', (message) => {
               dataTime[1],
               dataTime[2],
               student,
-              section,
+              // section,
               description,
             ],
           ]);
@@ -279,37 +279,33 @@ client.on('message', (message) => {
     }
   }
 
-  // $asistencia for Students
-  if (message.content === '$asistencia') {
-    if (message.member.roles.cache.some((role) => role.name === 'Alumnos')) {
-      console.log(`--- Writing $asistencia from ${message.author}`);
-      const dataTime = getDataTime();
+  // /asistencia for Students
+  if (message.content === '/asistencia') {
+    console.log(`--- Writing /asistencia from ${message.author}`);
+    const dataTime = getDataTime();
 
-      client2.authorize((err) => { // tokens
-        if (err) {
-          console.log(err);
-        } else {
-          return gsWriteAssistanceStudent(client2, [
-            [
-              message.author.username,
-              dataTime[0],
-              dataTime[1],
-              dataTime[2],
-            ],
-          ]);
-        }
-        return err;
-      });
-      message.reply('He registrado correctamente tu asistencia ✅');
-    } else {
-      message.reply('Debes ser estudiante para utilizar este comando ❌');
-    }
+    client2.authorize((err) => { // tokens
+      if (err) {
+        console.log(err);
+      } else {
+        return gsWriteAssistanceStudent(client2, [
+          [
+            message.author.username,
+            dataTime[0],
+            dataTime[1],
+            dataTime[2],
+          ],
+        ]);
+      }
+      return err;
+    });
+    message.reply('He registrado correctamente tu asistencia ✅');
   }
 
-  // $asistencia-ayudante for TAs
-  if (message.content === '$asistencia-ayudante') {
+  // /asistencia-ayudante for TAs
+  if (message.content === '/asistencia-ayudante') {
     if (message.member.roles.cache.some((role) => role.name === 'Ayudantes')) {
-      console.log(`--- Writing $asistencia-ayudante from ${message.author}`);
+      console.log(`--- Writing /asistencia-ayudante from ${message.author}`);
       const dataTime = getDataTime();
 
       client2.authorize((err) => { // tokens
@@ -333,8 +329,8 @@ client.on('message', (message) => {
     }
   }
 
-  if (message.content === '$join') {
-    console.log(`--- Executing $join from ${message.author}`);
+  if (message.content === '/join') {
+    console.log(`--- Executing /join from ${message.author}`);
     message.delete(1000);
     return client.emit('guildMemberAdd', message.author);
   }
