@@ -155,7 +155,7 @@ commandFiles.forEach((file) => {
 
 client.once('ready', async () => {
   console.log('SAI-bot is online!');
-  await gsCountRows(client2);
+  // await gsCountRows(client2);
 });
 
 client.on('guildMemberAdd', (member) => {
