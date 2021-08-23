@@ -168,7 +168,8 @@ client.on('guildMemberAdd', (member) => {
     });
 });
 
-client.on('message', (message) => {
+
+client.on('message', async (message) => {
   // EXIT IF MESSAGE IS FROM BOT OR DO NOT HAVE THE PREFIX
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
