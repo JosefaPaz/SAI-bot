@@ -170,6 +170,7 @@ client.on('message', message => {
                 } else {
                     // console.log("Connected to googlesheets !");
                     let alumno = args.shift();
+                    let last_F = get_actual_f();
                     // $ayuda "Nombre" "Descripcion"
                     console.log("Actual F !!!!!!!!", last_F);
                     // let seccion_function = `1`;
@@ -185,29 +186,24 @@ client.on('message', message => {
     } 
     
     if (message.content === '/asistencia') {
-        if (message.member.roles.cache.some(role => role.name === "Alumnos")) {
-            console.log("Se ejecuto el write !");
-            console.log(message.author);
-            let d = new Date();
-            let days = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Domingo"];
-            let months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-            let time = d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString(); 
+      console.log("Se ejecuto el write !");
+      console.log(message.author);
+      let d = new Date();
+      let days = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Domingo"];
+      let months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+      let time = d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString(); 
 
-            client2.authorize((err, tokens) => {
-        
-                if (err) {
-                    console.log(err);
-                    return;
-                } else {
-                    // console.log("Connected to googlesheets !");
-                    return gswriteassitanceAlumno(client2, [[message.author.username, days[d.getDay()], d.getDate(), months[d.getMonth()], time]]);
-                }
-            });
-            message.reply("He registrado correctamente tu asistencia ✅")
-        }
-        else {
-            message.reply("Debes ser alumno para utilizar este comando ❌")
-        }
+      client2.authorize((err, tokens) => {
+  
+          if (err) {
+              console.log(err);
+              return;
+          } else {
+              // console.log("Connected to googlesheets !");
+              return gswriteassitanceAlumno(client2, [[message.author.username, days[d.getDay()], d.getDate(), months[d.getMonth()], time]]);
+          }
+      });
+      message.reply("He registrado correctamente tu asistencia ✅")
     }
     
     if (message.content === '/asistencia-ayudante') {
