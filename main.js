@@ -1,389 +1,294 @@
+const fs = require('fs');
+const Discord = require('discord.js')
+const client = new Discord.Client({ ws: { intents: Discord.Intents.NON_PRIVILEGED } });
 require('dotenv').config();
 
-const fs = require('fs');
-const Discord = require('discord.js');
+// PERDON MUNDO POR EL CODIGO TAN DESORDENADO PERO SE QUE ESTO NO VA A ESCALAR SO WHO CARES !
+// - y si escala lo hago de 0 :(
 
-const client = new Discord.Client({
-  ws: { intents: Discord.Intents.NON_PRIVILEGED },
-});
-
-const { google } = require('googleapis');
-// const { type } = require('os');
-// const { request } = require('http');
+const {google} = require('googleapis');
+let client_email = process.env.CLIENT_EMAIL;
+let private_key = process.env.PRIVATE_KEY;
 const keys = require('./google-credentials.json');
-
-const prefix = process.env.PREFIX;
-const token = process.env.TOKEN;
-const clientEmail = process.env.CLIENT_EMAIL;
-const privateKey = process.env.PRIVATE_KEY;
-const clientSheet = process.env.SPREADSHEET_ID;
-
-let lastRow = null;
-async function gsCountRows(infoClient) {
-  const gsapi = google.sheets({ version: 'v4', auth: infoClient });
-
-  const readOptions = {
-    spreadsheetId: clientSheet,
-    range: 'Ayudas [BOT]!A1!A1:A100000000',
-  };
-
-  const res = await gsapi.spreadsheets.values.get(readOptions);
-  console.log(`--- Answer gsCountRows: ${res.data.values.length}`);
-  console.log(`--- Type of gsCountRows: ${typeof res.data.values.length}`);
-  lastRow = res.data.values.length + 1;
-}
-
-const client2 = new google.auth.JWT(keys.clientEmail, null, keys.privateKey, [
-  'https://www.googleapis.com/auth/spreadsheets',
-]);
-
-// const roleSections = {
-//   '875812774847074354': 1,
-//   '875775363714797658': 2,
-//   '875775363706417171': 3,
-//   '875775363706417170': 4,
-//   '875775363706417169': 5,
-//   '875775363706417168': 6,
-//   '875775363706417167': 7,
-//   '875775363706417166': 8,
-//   '875775363706417165': 9,
-//   '875775363706417164': 10,
-// };
-
-// async function getSection(message) {
-//   let section = 0;
-//   const memberRoles = [...message.member.roles.cache.keys()];
-//   memberRoles.forEach((rolId) => {
-//     if (rolId in roleSections) {
-//       section = roleSections[rolId];
-//     }
-//   });
-//   return section;
-// }
-
-async function getDataTime() {
-  const days = [
-    'Domingo',
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Domingo',
-  ];
-  const months = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ];
-  const d = new Date();
-
-  const time = `${d.getHours().toString()}:${d.getMinutes().toString()}:${d
-    .getSeconds()
-    .toString()}`;
-  return [days[d.getDay()], `${d.getDate()} ${months[d.getMonth()]}`, time];
-}
+let last_F = null;
 
 function countInstances(string, word) {
-  return string.split(word).length - 1;
+    return string.split(word).length - 1;
+ }
+
+const client2 = new google.auth.JWT(
+      keys.client_email,
+      null,
+      keys.private_key,
+      ['https://www.googleapis.com/auth/spreadsheets'],
+);
+
+async function gswriteassitance(client, data) {
+
+    const gsapi = google.sheets({version:'v4', auth: client});
+
+
+    const appendOptions = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: 'Asistencia Ayudantes [BOT]!A1',
+        valueInputOption: 'USER_ENTERED',
+        resource: { values: data},
+    };
+
+    let res = await gsapi.spreadsheets.values.append(appendOptions);
+    console.log(res);
+    // console.log(newDataArray);
 }
 
-async function gsWriteAssistanceTA(infoClient, data) {
-  const gsapi = google.sheets({ version: 'v4', auth: infoClient });
+async function gswriteassitanceAlumno(client, data) {
 
-  const appendOptions = {
-    spreadsheetId: clientSheet,
-    range: 'Asistencia Ayudantes [BOT]!A1',
-    valueInputOption: 'USER_ENTERED',
-    resource: { values: data },
-  };
+    const gsapi = google.sheets({version:'v4', auth: client});
 
-  const res = await gsapi.spreadsheets.values.append(appendOptions);
-  console.log(`--- Answer gsWriteAssistanceTA: ${res}`);
+
+    const appendOptions = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: 'Asistencia Estudiantes [BOT]!A1',
+        valueInputOption: 'USER_ENTERED',
+        resource: { values: data},
+    };
+
+    let res = await gsapi.spreadsheets.values.append(appendOptions);
+    console.log(res);
+    // console.log(newDataArray);
 }
 
-async function gsWriteAssistanceStudent(infoClient, data) {
-  const gsapi = google.sheets({ version: 'v4', auth: infoClient });
+async function gswritehelp(client, data) {
 
-  const appendOptions = {
-    spreadsheetId: clientSheet,
-    range: 'Asistencia Estudiantes [BOT]!A1',
-    valueInputOption: 'USER_ENTERED',
-    resource: { values: data },
-  };
+    const gsapi = google.sheets({version:'v4', auth: client});
 
-  const res = await gsapi.spreadsheets.values.append(appendOptions);
-  console.log(`--- Answer gsWriteAssistanceStudent: ${res}`);
+
+    const appendOptions = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: 'Ayudas [BOT]!A1',
+        valueInputOption: 'USER_ENTERED',
+        resource: { values: data},
+    };
+
+    let res = await gsapi.spreadsheets.values.append(appendOptions);
+    console.log(res);
+    gscountrows(client);
+    // console.log(newDataArray);
 }
 
-async function gsWriteHelp(infoClient, data) {
-  const gsapi = google.sheets({ version: 'v4', auth: infoClient });
+async function gscountrows(client) {
 
-  const appendOptions = {
-    spreadsheetId: clientSheet,
-    range: 'Ayudas [BOT]!A1',
-    valueInputOption: 'USER_ENTERED',
-    resource: { values: data },
-  };
+    const gsapi = google.sheets({version:'v4', auth: client});
 
-  const res = await gsapi.spreadsheets.values.append(appendOptions);
-  console.log(`--- Answer gsWriteAssistanceStudent: ${res}`);
-  await gsCountRows(infoClient);
+
+    const readOptions = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: 'Ayudas [BOT]!A1:A100000000',
+    };
+
+    let res = await gsapi.spreadsheets.values.get(readOptions);
+    console.log("REEEEEEEEEEEEEEEEEEEEEEEEES", res.data.values.length);
+    console.log("LEEEEEEEEEN", typeof res.data.values.length);
+    last_F = res.data.values.length + 1;
+    // console.log(newDataArray);
 }
+
+async function get_actual_f(client2) {
+    return gscountrows(client2);
+}
+
+
+// const { prefix, token } = require('./config.json');
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
+
 
 client.commands = new Discord.Collection();
+
 const cooldowns = new Discord.Collection();
 
-const commandFiles = fs
-  .readdirSync('./commands')
-  .filter((file) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-commandFiles.forEach((file) => {
-  // eslint-disable-next-line import/no-dynamic-require
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command)
+}
+
+client.once('ready', () => {
+    console.log("Pythoncita is online !");
+    gscountrows(client2);
 });
 
-client.once('ready', async () => {
-  console.log('SAI-bot is online!');
-  // await gsCountRows(client2);
-});
-
-client.on('guildMemberAdd', (member) => {
-  member
-    .send(
-      `Bienvenido al servidor, ${member.username}! Recuerda leer las reglas para poder usar el servidor`,
-    )
-    .then((sentEmbed) => {
-      sentEmbed.react('👍');
+client.on('guildMemberAdd', member => {
+	member.send(`Welcome to the server, ${member.username}!`).then(sentEmbed => {
+        sentEmbed.react("👍")
     });
 });
 
+client.on('message', message => {
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+   
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const infoHelp = message.content.slice(prefix.length).trim();
+    console.log("Llego esto !", args);
+    const commandName = args.shift().toLowerCase();
+    console.log(message);
 
-client.on('message', async (message) => {
-  // EXIT IF MESSAGE IS FROM BOT OR DO NOT HAVE THE PREFIX
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+    let marks = countInstances(infoHelp, '"')
+    console.log("MARKS!", marks);
 
-  // // ASSISTANCE OF STUDENTS
-  // if (message.channel.id === '813180432682188810') {
-  //   const d = new Date();
-  //   const hour = d.getHours();
-  //   const minutes = d.getMinutes();
-  //   console.log(`--- New message in dudas personales at ${hour} ---`);
-  //   if (!(hour >= 15 && hour <= 18) && !message.author.bot) {
-  //     message.reply(
-  //       '¡La SAV funciona de Lunes a Viernes de 15:30 a 18:20! Vuelva pronto :clock3: :snail:',
-  //     );
-  //   }
-  //   if (!message.author.bot) {
-  //     if (
-  //       (hour >= 15 && hour <= 18)
-  //       || (hour === 15 && minutes >= 30)
-  //       || (hour === 18 && minutes <= 20)
-  //     ) {
-  //       if (
-  //         message.member.roles.cache.some((role) => role.name === 'Alumnos')
-  //       ) {
-  //         console.log(
-  //           `--- Writing student assistance for ${message.author.username} ----`,
-  //         );
-  //         // const section = getSection(message);
-  //         const dataTime = getDataTime();
+    if (commandName === 'ayuda' ) {
+        if (marks === 4) {
+            console.log("Se ejecuto el write !");
+            console.log(message.author);
+            const d = new Date();
+            const days = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Domingo"];
+            const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+            const time = d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString(); 
+            // const studentSection = {
+            //     "Lotus": 0,
+            //     "Josefa España": 26
+            // }
 
-  //         client2.authorize((err) => { // tokens
-  //           if (err) {
-  //             console.log(err);
-  //           } else {
-  //             return gsWriteAssistanceStudent(client2, [
-  //               [
-  //                 message.author.username,
-  //                 // section,
-  //                 dataTime[0],
-  //                 dataTime[1],
-  //                 dataTime[2],
-  //               ],
-  //             ]);
-  //           }
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
+            const sep = '"';
+            const indices = [];
+            for(let i = 0; i < infoHelp.length; i++) {
+                if (infoHelp[i] === sep) indices.push(i);
+            }
 
-  // COMMANDS WITH THE PREFIX
-  const args = message.content.slice(prefix.length).trim().split(/ +/);
-  const infoHelp = message.content.slice(prefix.length).trim();
-  console.log(`--- New info: ${args}`);
-  console.log(`--- Message: ${message}`);
-  const commandName = args.shift().toLowerCase();
+            console.log("INFOHELP!", infoHelp);
+            const student = infoHelp.slice(indices[0] + 1, indices[1]);
+            console.log("STUDENT !", student);
+            const description = infoHelp.slice(indices[2] + 1, indices[3]);
+            console.log("DESCRIPTION !", description);
+            console.log("INFOHELP!", infoHelp);
 
-  const marks = countInstances(infoHelp, '"');
-  console.log(`--- Marks: ${marks}`);
-
-  if (!client.commands.has(commandName)) return;
-
-  // /ayuda "name_student" "course"
-  if (commandName === 'ayuda') {
-    if (marks === 4) {
-      console.log(`--- Writing /ayuda from ${message.author}`);
-      const dataTime = await getDataTime();
-      // let section = {
-      //   Lotus: 0,
-      //   'Josefa España': 26,
-      // };
-
-      const sep = '"';
-      const indices = [];
-      for (let i = 0; i < infoHelp.length; i += 1) {
-        if (infoHelp[i] === sep) indices.push(i);
-      }
-
-      console.log('--- INFOHELP:', infoHelp);
-      const student = infoHelp.slice(indices[0] + 1, indices[1]);
-      console.log('--- STUDENT:', student);
-      const description = infoHelp.slice(indices[2] + 1, indices[3]);
-      console.log('--- DESCRIPTION:', description);
-      console.log('--- INFOHELP:', infoHelp);
-
-      client2.authorize((err) => { // tokens
-        if (err) {
-          console.log(err);
-        } else { 
-          // const alumno = args.shift();
-          console.log(`Actual row ${lastRow}`);
-          // section = getSection(message);
-          return gsWriteHelp(client2, [
-            [
-              message.author.username,
-              dataTime[0],
-              dataTime[1],
-              dataTime[2],
-              student,
-              // section,
-              description,
-            ],
-          ]);
+            client2.authorize((err, tokens) => {
+        
+                if (err) {
+                    console.log(err);
+                    return;
+                } else {
+                    // console.log("Connected to googlesheets !");
+                    let alumno = args.shift();
+                    // $ayuda "Nombre" "Descripcion"
+                    console.log("Actual F !!!!!!!!", last_F);
+                    // let seccion_function = `1`;
+                    return gswritehelp(client2, [[message.author.username, days[d.getDay()], d.getDate(), months[d.getMonth()], time, student, description]]);
+                }
+            });
+            message.reply("He registrado correctamente tu ayuda ✅")
         }
-      });
-      message.reply('He registrado correctamente tu ayuda ✅');
-    } else {
-      message.reply('Olvidaste poner algun parametro o las comillas ! ❌');
-    }
-  }
-
-  // /asistencia for Students
-  if (message.content === '/asistencia') {
-    console.log(`--- Writing /asistencia from ${message.author}`);
-    const dataTime = await getDataTime();
-
-    client2.authorize((err) => { // tokens
-      if (err) {
-        console.log(err);
-      } else {
-        return gsWriteAssistanceStudent(client2, [
-          [
-            message.author.username,
-            dataTime[0],
-            dataTime[1],
-            dataTime[2],
-          ],
-        ]);
-      }
-      return err;
-    });
-    message.reply('He registrado correctamente tu asistencia ✅');
-  }
-
-  // /asistencia-ayudante for TAs
-  if (message.content === '/asistencia-ayudante') {
-    if (message.member.roles.cache.some((role) => role.name === 'Ayudantes')) {
-      console.log(`--- Writing /asistencia-ayudante from ${message.author}`);
-      const dataTime = await getDataTime();
-
-      client2.authorize((err) => { // tokens
-        if (err) {
-          console.log(err);
-        } else {
-          return gsWriteAssistanceTA(client2, [
-            [
-              message.author.username,
-              dataTime[0],
-              dataTime[1],
-              dataTime[2],
-            ],
-          ]);
+        else {
+            message.reply("Olvidaste poner algun parametro o las comillas ! ❌")
         }
-        return err;
-      });
-      message.reply('He registrado correctamente tu asistencia ✅');
-    } else {
-      message.reply('Debes ser ayudante para utilizar este comando ❌');
+
+    } 
+    
+    if (message.content === '/asistencia') {
+        if (message.member.roles.cache.some(role => role.name === "Alumnos")) {
+            console.log("Se ejecuto el write !");
+            console.log(message.author);
+            let d = new Date();
+            let days = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Domingo"];
+            let months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+            let time = d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString(); 
+
+            client2.authorize((err, tokens) => {
+        
+                if (err) {
+                    console.log(err);
+                    return;
+                } else {
+                    // console.log("Connected to googlesheets !");
+                    return gswriteassitanceAlumno(client2, [[message.author.username, days[d.getDay()], d.getDate(), months[d.getMonth()], time]]);
+                }
+            });
+            message.reply("He registrado correctamente tu asistencia ✅")
+        }
+        else {
+            message.reply("Debes ser alumno para utilizar este comando ❌")
+        }
     }
-  }
+    
+    if (message.content === '/asistencia-ayudante') {
+        if (message.member.roles.cache.some(role => role.name === "Ayudantes")) {
+            console.log("Se ejecuto el write !");
+            console.log(message.author);
+            let d = new Date();
+            let days = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Domingo"];
+            let months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+            let time = d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString(); 
 
-  if (message.content === '/join') {
-    console.log(`--- Executing /join from ${message.author}`);
-    message.delete(1000);
-    return client.emit('guildMemberAdd', message.author);
-  }
+            client2.authorize((err, tokens) => {
+        
+                if (err) {
+                    console.log(err);
+                    return;
+                } else {
+                    // console.log("Connected to googlesheets !");
+                    return gswriteassitance(client2, [[message.author.username, days[d.getDay()], d.getDate(), months[d.getMonth()], time]]);
+                }
+            });
+            message.reply("He registrado correctamente tu asistencia ✅")
+        }
+        else {
+            message.reply("Debes ser ayudante para utilizar este comando ❌")
+        }
+	}
 
-  const command = client.commands.get(commandName);
+    if (message.content === '/join') {
+        console.log("Se ejecuto el join !");
+        console.log(message.author);
+        message.delete(1000);
+		return client.emit('guildMemberAdd', message.author);
+	}
 
-  if (command.guildOnly && message.channel.type !== 'text') {
-    return message.reply(
-      'No puedo ejecutar este comando en un chat privado, debes usarlo en el canal correspondiente :)',
-    );
-  }
+    if (!client.commands.has(commandName)) return;
 
-  if (command.args && !args.length) {
-    let reply = `No pusiste los argumentos necesarios ! ${message.author}`;
+    const command = client.commands.get(commandName)
 
-    if (command.usage) {
-      reply += `\nLa forma correcta de usar el comando es: \`${prefix}${command.name} ${command.usage}\``;
+    if (command.guildOnly && message.channel.type !== 'text') {
+        return message.reply("No puedo ejecutar este comando en un chat privado, debes usarlo en el canal correspondiente :)")
     }
 
-    return message.channel.send(reply);
-  }
+    if (command.args && !args.length) {
+        let reply = `No pusiste los argumentos necesarios ! ${message.author}`;
 
-  if (!cooldowns.has(command.name)) {
-    cooldowns.set(command.name, new Discord.Collection());
-  }
+        if (command.usage) {
+            reply += `\nLa forma correcta de usar el comando es: \`${prefix}${command.name} ${command.usage}\``;
+        }
 
-  const now = Date.now();
-  const timestamps = cooldowns.get(command.name);
-  const cooldownAmount = (command.cooldown || 3) * 1000;
+        return message.channel.send(reply);
 
-  if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-    if (now < expirationTime) {
-      const timeLeft = (expirationTime - now) / 1000;
-      return message.reply(
-        `Por favor espera ${timeLeft.toFixed(
-          1,
-        )} segundo(s) mas antes de volver a usar el comando \`${command.name}\``,
-      );
     }
-  }
 
-  timestamps.set(message.author.id, now);
-  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+    if (!cooldowns.has(command.name)) {
+        cooldowns.set(command.name, new Discord.Collection());
+    }
+    
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.name);
+    const cooldownAmount = (command.cooldown || 3) * 1000;
 
-  try {
-    command.execute(message, args);
-  } catch (error) {
-    console.error(error);
-    message.reply('Ocurrió un error al momento de ejecutar el comando :(');
-  }
+    if (timestamps.has(message.author.id)) {
+        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+    
+        if (now < expirationTime) {
+            const timeLeft = (expirationTime - now) / 1000;
+            return message.reply(`Por favor espera ${timeLeft.toFixed(1)} segundo(s) mas antes de volver a usar el comando \`${command.name}\``);
+        }
+    }
+
+    timestamps.set(message.author.id, now);
+    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+
+    try {
+        command.execute(message, args);
+    } catch (error) {
+        console.error(error);
+        message.reply('Ocurrió un error al momento de ejecutar el comando :(');
+    }
 });
 
 client.login(token);
