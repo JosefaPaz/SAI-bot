@@ -137,7 +137,7 @@ async function gsWriteHelp(infoClient, data) {
 
   const res = await gsapi.spreadsheets.values.append(appendOptions);
   console.log(`--- Answer gsWriteAssistanceStudent: ${res}`);
-  gsCountRows(infoClient);
+  await gsCountRows(infoClient);
 }
 
 client.commands = new Discord.Collection();
@@ -155,7 +155,7 @@ commandFiles.forEach((file) => {
 
 client.once('ready', () => {
   console.log('SAI-bot is online!');
-  gsCountRows(client2);
+  await gsCountRows(client2);
 });
 
 client.on('guildMemberAdd', (member) => {
@@ -168,7 +168,8 @@ client.on('guildMemberAdd', (member) => {
     });
 });
 
-client.on('message', (message) => {
+
+client.on('message', async (message) => {
   // EXIT IF MESSAGE IS FROM BOT OR DO NOT HAVE THE PREFIX
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
