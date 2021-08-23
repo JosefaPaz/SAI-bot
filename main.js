@@ -14,8 +14,8 @@ const keys = require('./google-credentials.json');
 
 const prefix = process.env.PREFIX;
 const token = process.env.TOKEN;
-// const clientEmail = process.env.CLIENT_EMAIL;
-// const privateKey = process.env.PRIVATE_KEY;
+const clientEmail = process.env.CLIENT_EMAIL;
+const privateKey = process.env.PRIVATE_KEY;
 const clientSheet = process.env.SPREADSHEET_ID;
 
 let lastRow = null;
@@ -234,7 +234,7 @@ client.on('message', (message) => {
   if (commandName === 'ayuda') {
     if (marks === 4) {
       console.log(`--- Writing /ayuda from ${message.author}`);
-      const dataTime = getDataTime();
+      const dataTime = await getDataTime();
       // let section = {
       //   Lotus: 0,
       //   'Josefa España': 26,
@@ -282,7 +282,7 @@ client.on('message', (message) => {
   // /asistencia for Students
   if (message.content === '/asistencia') {
     console.log(`--- Writing /asistencia from ${message.author}`);
-    const dataTime = getDataTime();
+    const dataTime = await getDataTime();
 
     client2.authorize((err) => { // tokens
       if (err) {
@@ -306,7 +306,7 @@ client.on('message', (message) => {
   if (message.content === '/asistencia-ayudante') {
     if (message.member.roles.cache.some((role) => role.name === 'Ayudantes')) {
       console.log(`--- Writing /asistencia-ayudante from ${message.author}`);
-      const dataTime = getDataTime();
+      const dataTime = await getDataTime();
 
       client2.authorize((err) => { // tokens
         if (err) {
