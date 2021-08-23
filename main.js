@@ -153,7 +153,7 @@ commandFiles.forEach((file) => {
   client.commands.set(command.name, command);
 });
 
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log('SAI-bot is online!');
   await gsCountRows(client2);
 });
