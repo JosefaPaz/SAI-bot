@@ -290,5 +290,5 @@ client.on('message', message => {
         message.reply('Ocurrió un error al momento de ejecutar el comando :(');
     }
 });
-
+ 
 client.login(token);
